@@ -1,0 +1,74 @@
+{
+  "estrategia_nombre": "Plantilla Definición Algoritmo",
+
+  "indicadores": [
+    { "id": "ind_precio", "tipo": "NATIVO", "activo": false, "_nota": "Devuelve: ind_precio.valor (precio cierre)" },
+    { "id": "ind_volumen", "tipo": "NATIVO", "activo": false, "_nota": "Devuelve: ind_volumen.valor" },
+    
+    { "id": "ind_sma_1", "tipo": "SMA", "parametros": { "periodos": 50 }, "activo": false },
+    { "id": "ind_ema_1", "tipo": "EMA", "parametros": { "periodos": 20 }, "activo": false },
+    
+    { "id": "ind_macd_1", "tipo": "MACD", "parametros": { "rapido": 12, "lento": 26, "senal": 9 }, "activo": false, "_nota": "Salidas: .macd, .senal, .hist" },
+    { "id": "ind_bollinger_1", "tipo": "BOLLINGER", "parametros": { "periodos": 20, "desviacion": 2.0 }, "activo": false, "_nota": "Salidas: .superior, .media, .inferior" },
+    { "id": "ind_stoch_1", "tipo": "STOCHASTIC", "parametros": { "k": 14, "d": 3 }, "activo": false, "_nota": "Salidas: .k, .d" },
+    
+    { "id": "ind_rsi_1", "tipo": "RSI", "parametros": { "periodos": 14 }, "activo": false },
+    { "id": "ind_adx_1", "tipo": "ADX", "parametros": { "periodos": 14 }, "activo": false },
+    { "id": "ind_cci_1", "tipo": "CCI", "parametros": { "periodos": 20 }, "activo": false },
+    { "id": "ind_atr_1", "tipo": "ATR", "parametros": { "periodos": 14 }, "activo": false },
+    
+    { "id": "ind_vwap_1", "tipo": "VWAP", "parametros": {}, "activo": false },
+    { "id": "ind_obv_1", "tipo": "OBV", "parametros": {}, "activo": false }
+  ],
+
+  "eventos": [
+    {
+      "id": "comparador",
+      "activo": true,
+      "variable_A": "ind_precio.valor",
+      "condicion": "MAYOR_QUE",
+      "variable_B": "ind_sma_2.valor"
+    },
+    {
+      "id": "cruce",
+      "activo": true,
+      "variable_A": "ind_sma_1.valor",
+      "condicion": "CRUCE",
+      "variable_B": "ind_sma_2.valor",
+      "_nota": "A cruza a B hacia arriba."
+    }
+
+  ],
+
+  "reglas": [
+    {
+      "id": "regla_entrada_largo",
+      "activo": true,
+      "accion": "ENTRADA",
+      "direccion": "LARGO",
+      "condicion_raiz": {
+        "operador": "AND",
+        "sub_condiciones": [
+          { "tipo": "EVENTO", "referencia": "evt_tendencia_alcista" },
+          { "tipo": "EVENTO", "referencia": "evt_cruce_alcista_medias" }
+        ]
+      }
+    },
+    {
+      "id": "regla_salida_largo",
+      "activo": true,
+      "accion": "SALIDA",
+      "direccion": "LARGO",
+      "riesgo": {
+        "activo": true,
+        "stop_loss_pct": 5.0,
+        "take_profit_pct": 15.0,
+        "trailing_stop_pct": 0.0
+      },
+      "condicion_raiz": {
+        "operador": "OR",
+        "sub_condiciones": []
+      }
+    }
+  ]
+}
